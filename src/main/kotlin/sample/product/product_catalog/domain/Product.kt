@@ -8,7 +8,7 @@ data class Product(
 ) {
 }
 
-enum class ProductCategory(val category:String){
+enum class ProductCategory(val categoryName:String){
     ELECTRONICS("Electronics"),
     HOME_KITCHEN("Home & Kitchen"),
     CLOTHING("Clothing"),
@@ -22,6 +22,8 @@ enum class ProductCategory(val category:String){
 
     companion object{
         fun of(category: String):ProductCategory =
-            ProductCategory.entries.find { it.category==category }?:throw IllegalArgumentException("Product Category not allowed: $category")
+            ProductCategory.entries.find { it.categoryName==category || it.name==category }?:throw ProductCategoryNotSupportedException(category)
     }
 }
+
+data class ProductCategoryNotSupportedException(val category:String):Throwable("Product Category not allowed: $category")
