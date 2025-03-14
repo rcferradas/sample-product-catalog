@@ -1,6 +1,6 @@
 package sample.product.product_catalog.rest
 
-import org.springframework.http.HttpEntity
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -16,7 +16,7 @@ class ProductController (val productService: ProductService){
     fun getProducts(
         @RequestParam("category") category:String?=null,
         @RequestParam("sortBy") sortBy:String?=null,
-    ):HttpEntity<*> {
-        return HttpEntity(productService.getProducts(category?.let { ProductCategory.of(category)},sortBy))
+    ):ResponseEntity<*> {
+        return ResponseEntity.ok(productService.getProducts(category?.let { ProductCategory.of(category)},sortBy))
     }
 }

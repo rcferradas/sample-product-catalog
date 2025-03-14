@@ -3,13 +3,12 @@ package sample.product.product_catalog.app
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import sample.product.product_catalog.domain.Product
-import sample.product.product_catalog.domain.ProductCategory
+import sample.product.product_catalog.domain.ProductCategory.ELECTRONICS
+import sample.product.product_catalog.domain.ProductCategory.HOME_KITCHEN
 import sample.product.product_catalog.infrastructure.database.ProductRepository
 import kotlin.test.assertContentEquals
 
@@ -18,7 +17,6 @@ private const val SORT_BY_PRICE = "price"
 private const val SORT_BY_SKU = "sku"
 private const val SORT_BY_DESCRIPTION = "description"
 
-@ExtendWith(MockitoExtension::class)
 class ProductServiceImplTest {
  private val repository: ProductRepository = mock()
  private val service: ProductServiceImpl = ProductServiceImpl(repository)
@@ -26,8 +24,8 @@ class ProductServiceImplTest {
  @Test
  fun `should return all products when no category is specified`() {
   val products = listOf(
-   Product("SKU0001", "Wireless Mouse", 19.99, ProductCategory.ELECTRONICS),
-   Product("SKU0002", "4K TV", 499.00, ProductCategory.ELECTRONICS)
+   Product("SKU0001", "Wireless Mouse", 19.99, ELECTRONICS),
+   Product("SKU0002", "4K TV", 499.00, ELECTRONICS)
   )
   whenever(repository.findAll()).thenReturn(products)
 
@@ -39,30 +37,30 @@ class ProductServiceImplTest {
  @Test
  fun `should return only products of category specified`() {
   val products = listOf(
-   Product("SKU0001", "Wireless Mouse", 19.99, ProductCategory.ELECTRONICS),
-   Product("SKU0002", "4K TV", 499.00, ProductCategory.ELECTRONICS),
-   Product("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN)
+   Product("SKU0001", "Wireless Mouse", 19.99, ELECTRONICS),
+   Product("SKU0002", "4K TV", 499.00, ELECTRONICS),
+   Product("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN)
   )
-  whenever(repository.findByCategory(ProductCategory.ELECTRONICS.categoryName)).thenReturn(products.filter { it.category == ProductCategory.ELECTRONICS})
+  whenever(repository.findByCategory(ELECTRONICS.categoryName)).thenReturn(products.filter { it.category == ELECTRONICS})
 
-  val result = service.getProducts(ProductCategory.ELECTRONICS)
+  val result = service.getProducts(ELECTRONICS)
 
-  verify(repository).findByCategory(ProductCategory.ELECTRONICS.categoryName)
+  verify(repository).findByCategory(ELECTRONICS.categoryName)
   assertEquals(2, result.size)
-  assertTrue(result.all { it.category == ProductCategory.ELECTRONICS.categoryName })
+  assertTrue(result.all { it.category == ELECTRONICS.categoryName })
  }
 
  @Test
  fun `should return products sorted by sku`() {
   val expected = listOf(
-   ProductDTO("SKU0001","Wireless Mouse",19.99, ProductCategory.ELECTRONICS.categoryName),
-   ProductDTO("SKU0002","4K TV", 499.00, ProductCategory.ELECTRONICS.categoryName),
-   ProductDTO("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN.categoryName),
+   ProductDTO("SKU0001","Wireless Mouse",19.99, ELECTRONICS.categoryName,16.99),
+   ProductDTO("SKU0002","4K TV", 499.00, ELECTRONICS.categoryName,424.15),
+   ProductDTO("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN.categoryName,22.13),
   )
   val products = listOf(
-   Product("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN),
-   Product("SKU0001", "Wireless Mouse", 19.99, ProductCategory.ELECTRONICS),
-   Product("SKU0002", "4K TV", 499.00, ProductCategory.ELECTRONICS),
+   Product("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN),
+   Product("SKU0001", "Wireless Mouse", 19.99, ELECTRONICS),
+   Product("SKU0002", "4K TV", 499.00, ELECTRONICS),
   )
   whenever(repository.findAll()).thenReturn(products)
 
@@ -75,14 +73,14 @@ class ProductServiceImplTest {
  @Test
  fun `should return products sorted by price`() {
   val expected = listOf(
-   ProductDTO("SKU0001","Wireless Mouse",19.99, ProductCategory.ELECTRONICS.categoryName),
-   ProductDTO("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN.categoryName),
-   ProductDTO("SKU0002","4K TV", 499.00, ProductCategory.ELECTRONICS.categoryName),
+   ProductDTO("SKU0001","Wireless Mouse",19.99, ELECTRONICS.categoryName,16.99),
+   ProductDTO("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN.categoryName,22.13),
+   ProductDTO("SKU0002","4K TV", 499.00, ELECTRONICS.categoryName,424.15),
   )
   val products = listOf(
-   Product("SKU0001", "Wireless Mouse", 19.99, ProductCategory.ELECTRONICS),
-   Product("SKU0002", "4K TV", 499.00, ProductCategory.ELECTRONICS),
-   Product("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN),
+   Product("SKU0001", "Wireless Mouse", 19.99, ELECTRONICS),
+   Product("SKU0002", "4K TV", 499.00, ELECTRONICS),
+   Product("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN),
   )
   whenever(repository.findAll()).thenReturn(products)
 
@@ -95,14 +93,14 @@ class ProductServiceImplTest {
  @Test
  fun `should return products sorted by description`() {
   val expected = listOf(
-   ProductDTO("SKU0002","4K TV", 499.00, ProductCategory.ELECTRONICS.categoryName),
-   ProductDTO("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN.categoryName),
-   ProductDTO("SKU0001","Wireless Mouse",19.99, ProductCategory.ELECTRONICS.categoryName),
+   ProductDTO("SKU0002","4K TV", 499.00, ELECTRONICS.categoryName,424.15),
+   ProductDTO("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN.categoryName,22.13),
+   ProductDTO("SKU0001","Wireless Mouse",19.99, ELECTRONICS.categoryName,16.99),
   )
   val products = listOf(
-   Product("SKU0001", "Wireless Mouse", 19.99, ProductCategory.ELECTRONICS),
-   Product("SKU0002", "4K TV", 499.00, ProductCategory.ELECTRONICS),
-   Product("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN),
+   Product("SKU0001", "Wireless Mouse", 19.99, ELECTRONICS),
+   Product("SKU0002", "4K TV", 499.00, ELECTRONICS),
+   Product("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN),
   )
   whenever(repository.findAll()).thenReturn(products)
 
@@ -115,14 +113,14 @@ class ProductServiceImplTest {
  @Test
  fun `should return products sorted by category`() {
   val expected = listOf(
-   ProductDTO("SKU0001","Wireless Mouse",19.99, ProductCategory.ELECTRONICS.categoryName),
-   ProductDTO("SKU0002","4K TV", 499.00, ProductCategory.ELECTRONICS.categoryName),
-   ProductDTO("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN.categoryName),
+   ProductDTO("SKU0001","Wireless Mouse",19.99, ELECTRONICS.categoryName,16.99),
+   ProductDTO("SKU0002","4K TV", 499.00, ELECTRONICS.categoryName,424.15),
+   ProductDTO("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN.categoryName,22.13),
   )
   val products = listOf(
-   Product("SKU0001", "Wireless Mouse", 19.99, ProductCategory.ELECTRONICS),
-   Product("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN),
-   Product("SKU0002", "4K TV", 499.00, ProductCategory.ELECTRONICS),
+   Product("SKU0001", "Wireless Mouse", 19.99, ELECTRONICS),
+   Product("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN),
+   Product("SKU0002", "4K TV", 499.00, ELECTRONICS),
   )
   whenever(repository.findAll()).thenReturn(products)
 
@@ -135,22 +133,46 @@ class ProductServiceImplTest {
  @Test
  fun `should return only products of category specified and sorted by price`() {
   val expected = listOf(
-   ProductDTO("SKU0002","4K TV", 99.00, ProductCategory.ELECTRONICS.categoryName),
-   ProductDTO("SKU0001","Wireless Mouse",499.99, ProductCategory.ELECTRONICS.categoryName),
+   ProductDTO("SKU0002","4K TV", 99.00, ELECTRONICS.categoryName,84.15),
+   ProductDTO("SKU0001","Wireless Mouse",499.99, ELECTRONICS.categoryName,424.99),
   )
   val products = listOf(
-   Product("SKU0001", "Wireless Mouse", 499.99, ProductCategory.ELECTRONICS),
-   Product("SKU0002", "4K TV", 99.00, ProductCategory.ELECTRONICS),
-   Product("SKU0003", "Water Bottle", 29.50, ProductCategory.HOME_KITCHEN)
+   Product("SKU0001", "Wireless Mouse", 499.99, ELECTRONICS),
+   Product("SKU0002", "4K TV", 99.00, ELECTRONICS),
+   Product("SKU0003", "Water Bottle", 29.50, HOME_KITCHEN)
   )
-  whenever(repository.findByCategory(ProductCategory.ELECTRONICS.categoryName)).thenReturn(products.filter { it.category == ProductCategory.ELECTRONICS})
+  whenever(repository.findByCategory(ELECTRONICS.categoryName)).thenReturn(products.filter { it.category == ELECTRONICS})
 
-  val result = service.getProducts(ProductCategory.ELECTRONICS, SORT_BY_PRICE)
+  val result = service.getProducts(ELECTRONICS, SORT_BY_PRICE)
 
-  verify(repository).findByCategory(ProductCategory.ELECTRONICS.categoryName)
+  verify(repository).findByCategory(ELECTRONICS.categoryName)
   assertEquals(2, result.size)
-  assertTrue(result.all { it.category == ProductCategory.ELECTRONICS.categoryName })
+  assertTrue(result.all { it.category == ELECTRONICS.categoryName })
   assertContentEquals(expected,result)
+ }
+
+ @Test
+ fun `should apply correct discount for Electronics`() {
+  val product = Product("SKU0001","Wireless Mouse", 100.0,  ELECTRONICS)
+  whenever(repository.findAll()).thenReturn(listOf(product))
+  val discounted = service.getProducts(null, null).first()
+  assertEquals(85.0, discounted.discountedPrice)
+ }
+
+ @Test
+ fun `should apply correct discount for Home & Kitchen`() {
+  val product = Product("SKU0003", "Water Bottle", 200.0, HOME_KITCHEN)
+  whenever(repository.findAll()).thenReturn(listOf(product))
+  val discounted = service.getProducts(null, null).first()
+  assertEquals(150.0, discounted.discountedPrice)
+ }
+
+ @Test
+ fun `should apply correct discount for SKU ending in 5`() {
+  val product = Product("SKU0005", "Headphones", 300.0, ELECTRONICS)
+  whenever(repository.findAll()).thenReturn(listOf(product))
+  val discounted = service.getProducts(null, null).first()
+  assertEquals(210.0, discounted.discountedPrice)
  }
 
 }

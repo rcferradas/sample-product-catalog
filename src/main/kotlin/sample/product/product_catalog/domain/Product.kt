@@ -26,4 +26,4 @@ enum class ProductCategory(val categoryName:String){
     }
 }
 
-data class ProductCategoryNotSupportedException(val category:String):Throwable("Product Category not allowed: $category")
+data class ProductCategoryNotSupportedException(val category:String):Exception("Product Category not allowed: $category")
