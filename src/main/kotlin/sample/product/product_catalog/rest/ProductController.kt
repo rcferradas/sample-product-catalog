@@ -13,7 +13,10 @@ import sample.product.product_catalog.domain.ProductCategory
 class ProductController (val productService: ProductService){
 
     @GetMapping
-    fun getProducts(@RequestParam("category") category:String?=null):HttpEntity<*> {
-        return HttpEntity(productService.getProducts(category?.let { ProductCategory.of(category)}))
+    fun getProducts(
+        @RequestParam("category") category:String?=null,
+        @RequestParam("sortBy") sortBy:String?=null,
+    ):HttpEntity<*> {
+        return HttpEntity(productService.getProducts(category?.let { ProductCategory.of(category)},sortBy))
     }
 }
