@@ -1,10 +1,9 @@
 package sample.product.product_catalog.app
 
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -15,8 +14,8 @@ import sample.product.product_catalog.infrastructure.database.ProductRepository
 
 @ExtendWith(MockitoExtension::class)
 class ProductServiceImplTest {
- @InjectMocks private lateinit var service: ProductServiceImpl
  private val repository: ProductRepository = mock()
+ private val service: ProductServiceImpl = ProductServiceImpl(repository)
 
  @Test
  fun `should return all products when no category is specified`() {
